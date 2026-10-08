@@ -30,7 +30,7 @@ def deletar_livro(idLivro):
     cursor = conn.cursor()
 
     # tenta apagar o registro informado
-    cursor.execute("DELETE FROM livro WHERE idLivro = ?", (idLivro,))
+    cursor.execute("DELETE FROM livro WHERE idLivro = %s", (idLivro,))
     conn.commit()
 
     # cursor.rowcount informa quantas linhas foram afetadas
@@ -62,8 +62,8 @@ def criar_livro():
     conn = conectar()
     cursor = conn.cursor()
     cursor.execute(
-        "INSERT INTO emprestimo (titulo, autor, editora, ano, categoria, quantidadeDisponivel, quantidadeTotal)"
-        "VALUES (?, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO livro (titulo, autor, editora, ano, categoria, quantidadeDisponivel, quantidadeTotal)"
+        "VALUES (%s, %s, %s, %s, %s, %s, %s)",
         (dados["titulo"], dados["autor"], dados["editora"], dados["ano"], dados["categoria"], dados["quantidadeDisponivel"], dados["quantidadeTotal"])
     )
     conn.commit()
@@ -73,7 +73,7 @@ def criar_livro():
     # 201 Created + Location do recurso recém‑criado
     resposta = jsonify({"idLivro": novo_idLivro, **dados})
     resposta.status_code = 201
-    resposta.headers["Location"] = f"/estudante/{novo_idLivro}"
+    resposta.headers["Location"] = f"/livro/{novo_idLivro}"
     return resposta
 
 ##ROTA UPDATE
@@ -95,7 +95,7 @@ def atualizar_livro(idLivro):
     set_clauses = []
     valores = []
     for campo in campos_validos & dados.keys():
-        set_clauses.append(f"{campo} = ?")
+        set_clauses.append(f"{campo} = %s")
         valores.append(dados[campo])
 
     if not set_clauses:
@@ -106,7 +106,7 @@ def atualizar_livro(idLivro):
     conn = conectar()
     cursor = conn.cursor()
     cursor.execute(
-        f"UPDATE livro SET {', '.join(set_clauses)} WHERE idLivro = ?",
+        f"UPDATE livro SET {', '.join(set_clauses)} WHERE idLivro = %s",
         tuple(valores)
     )
     conn.commit()

@@ -30,7 +30,7 @@ def deletar_funcionario(idFuncionario):
     cursor = conn.cursor()
 
     # tenta apagar o registro informado
-    cursor.execute("DELETE FROM funcionario WHERE idFuncionario = ?", (idFuncionario,))
+    cursor.execute("DELETE FROM funcionario WHERE idFuncionario = %s", (idFuncionario,))
     conn.commit()
 
     # cursor.rowcount informa quantas linhas foram afetadas
@@ -63,7 +63,7 @@ def criar_funcionario():
     cursor = conn.cursor()
     cursor.execute(
         "INSERT INTO funcionario (login, senha, nome)"
-        "VALUES (?, ?, ?)",
+        "VALUES (%s, %s, %s)",
         (dados["login"], dados["senha"], dados["nome"])
     )
     conn.commit()
@@ -95,7 +95,7 @@ def atualizar_funcionario(idFuncionario):
     set_clauses = []
     valores = []
     for campo in campos_validos & dados.keys():
-        set_clauses.append(f"{campo} = ?")
+        set_clauses.append(f"{campo} = %s")
         valores.append(dados[campo])
 
     if not set_clauses:
@@ -106,7 +106,7 @@ def atualizar_funcionario(idFuncionario):
     conn = conectar()
     cursor = conn.cursor()
     cursor.execute(
-        f"UPDATE funcionario SET {', '.join(set_clauses)} WHERE idFuncionario = ?",
+        f"UPDATE funcionario SET {', '.join(set_clauses)} WHERE idFuncionario = %s",
         tuple(valores)
     )
     conn.commit()
