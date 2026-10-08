@@ -30,7 +30,7 @@ def deletar_emprestimo(idEmprestimo):
     cursor = conn.cursor()
 
     # tenta apagar o registro informado
-    cursor.execute("DELETE FROM emprestimo WHERE idEmprestimo = ?", (idEmprestimo,))
+    cursor.execute("DELETE FROM emprestimo WHERE idEmprestimo = %s", (idEmprestimo,))
     conn.commit()
 
     # cursor.rowcount informa quantas linhas foram afetadas
@@ -63,7 +63,7 @@ def criar_emprestimo():
     cursor = conn.cursor()
     cursor.execute(
         "INSERT INTO emprestimo (dataEmprestimo, dataDevolucaoPrevista, dataDevolucaoReal, status)"
-        "VALUES (?, ?, ?, ?)",
+        "VALUES (%s, %s, %s, %s)",
         (dados["dataEmprestimo"], dados["dataDevolucaoPrevista"], dados["dataDevolucaoReal"], dados["status"])
     )
     conn.commit()
@@ -95,7 +95,7 @@ def atualizar_emprestimo(idEmprestimo):
     set_clauses = []
     valores = []
     for campo in campos_validos & dados.keys():
-        set_clauses.append(f"{campo} = ?")
+        set_clauses.append(f"{campo} = %s")
         valores.append(dados[campo])
 
     if not set_clauses:
@@ -106,7 +106,7 @@ def atualizar_emprestimo(idEmprestimo):
     conn = conectar()
     cursor = conn.cursor()
     cursor.execute(
-        f"UPDATE emprestimo SET {', '.join(set_clauses)} WHERE idEmprestimo = ?",
+        f"UPDATE emprestimo SET {', '.join(set_clauses)} WHERE idEmprestimo = %s",
         tuple(valores)
     )
     conn.commit()
