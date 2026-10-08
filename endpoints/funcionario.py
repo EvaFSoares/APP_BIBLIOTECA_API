@@ -118,3 +118,25 @@ def atualizar_funcionario(idFuncionario):
     conn.close()
     # 204 = No Content, mas você pode devolver 200 com o JSON atualizado se preferir
     return ("", 204)
+
+##ROTA LOGIN
+#############################################
+@funcionario_bp.route("/funcionario/login", methods=["POST"])
+def login_funcionario():
+    dados = request.get_json(silent=True)
+    if not dados or "login" not in dados or "senha" not in dados:
+        abort(400, description="Informe login e senha")
+
+    conn = conectar()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT idFuncionario, nome FROM funcionario WHERE login = %s AND senha = %s",
+        (dados["login"], dados["senha"])
+    )
+    row = cursor.fetchone()
+    conn.close()
+
+    if not row:
+        abort(401, description="Login ou senha inválidos")
+
+    return jsonify({"idFuncionario": row[0], "nome": row[1]})

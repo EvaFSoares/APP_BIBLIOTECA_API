@@ -1,10 +1,12 @@
 from flask import Flask
+from flask_cors import CORS
 from endpoints.emprestimo import emprestimo_bp
 from endpoints.estudante import estudante_bp
 from endpoints.funcionario import funcionario_bp
 from endpoints.livro import livro_bp
 
 app = Flask(__name__)
+CORS(app)
 
 # Registrar os blueprints
 app.register_blueprint(emprestimo_bp)
